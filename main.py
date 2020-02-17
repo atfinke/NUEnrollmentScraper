@@ -90,9 +90,20 @@ def parse_class_page(driver):
         except:
             pass
 
-    results['title'] = driver.find_element_by_id('DERIVED_CLSRCH_DESCR200').text.replace('\xa0', '')
-    results['time'] = driver.find_element_by_id('MTG_SCHED$0').text.replace('\xa0', '')
-    return results
+    title = driver.find_element_by_id('DERIVED_CLSRCH_DESCR200').text.replace('\xa0', '')
+    time = driver.find_element_by_id('MTG_SCHED$0').text.replace('\xa0', '')
+
+    if 'Available Seats' not in results:
+        print('{} ({}):\nmissing available seats\n'.format(title, time))
+        return
+
+    seats = results['Available Seats']
+    if 'Class Capacity' in results:
+        print('{} ({}):\nOpen Seats: {} / {}\n'.format(title, time, seats, results['Class Capacity']))
+    elif 'Combined Section Capacity' in results:
+        print('{} ({}):\nOpen Seats: {} / {}\n'.format(title, time, seats, results['Combined Section Capacity']))
+    else:
+        print('{} ({}):\nmissing capacity\n'.format(title, time))
 
 
 driver = webdriver.Safari()
@@ -102,24 +113,8 @@ pickle.dump(driver.get_cookies(), open("cookies.pkl", "wb"))
 
 class_numbers = parse_shopping_cart(driver)
 
-results = []
+print('results:\n')
 for class_num in class_numbers:
     open_search_classes_results(driver, class_num)
-    results.append(parse_class_page(driver))
+    parse_class_page(driver)
 driver.quit()
-
-print("results:\n")
-for class_info in results:
-    title = class_info['title']
-    time = class_info['time']
-    if 'Available Seats' not in class_info:
-        print('{} ({}):\nmissing available seats\n'.format(title, time))
-        continue
-
-    seats = class_info['Available Seats']
-    if 'Class Capacity' in class_info:
-        print('{} ({}):\nOpen Seats: {} / {}\n'.format(title, time, seats, class_info['Class Capacity']))
-    elif 'Combined Section Capacity' in class_info:
-        print('{} ({}):\nOpen Seats: {} / {}\n'.format(title, time, seats, class_info['Combined Section Capacity']))
-    else:
-        print('{} ({}):\nmissing capacity\n'.format(title, time))
