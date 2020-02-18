@@ -7,8 +7,6 @@ import secrets
 from utils import load_main_page, wait, click
 from caesar_authentication import authenticate, is_authenticated
 
-CLASS_NUMBERS_TO_CHECK = [32701, 33510, 37987, 34338, 32448, 32455, 32468, 38006, 34321, 33715, 31916, 35867, 31712]
-
 
 def load_cookies(driver):
     driver.get('https://www.northwestern.edu/')
