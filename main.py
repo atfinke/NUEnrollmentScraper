@@ -90,18 +90,21 @@ def parse_class_page(driver):
 
     title = driver.find_element_by_id('DERIVED_CLSRCH_DESCR200').text.replace('\xa0', '')
     time = driver.find_element_by_id('MTG_SCHED$0').text.replace('\xa0', '')
+    units = driver.find_element_by_id('win0divSSR_CLS_DTL_WRK_UNITS_RANGE').text.replace('\n', '')
+    grading = driver.find_element_by_id('win0divGRADE_BASIS_TBL_DESCRFORMAL').text.replace('\n', '')
 
+    description = '{}\n{}, {}, Grading: {}'.format(title, time, units, grading)
     if 'Available Seats' not in results:
-        print('{} ({}):\nmissing available seats\n'.format(title, time))
+        print('{}\nmissing available seats\n'.format(description))
         return
 
     seats = results['Available Seats']
     if 'Class Capacity' in results:
-        print('{} ({}):\nOpen Seats: {} / {}\n'.format(title, time, seats, results['Class Capacity']))
+        print('{}\nOpen Seats: {} / {}\n'.format(description, seats, results['Class Capacity']))
     elif 'Combined Section Capacity' in results:
-        print('{} ({}):\nOpen Seats: {} / {}\n'.format(title, time, seats, results['Combined Section Capacity']))
+        print('{}\nOpen Seats: {} / {}\n'.format(description, seats, results['Combined Section Capacity']))
     else:
-        print('{} ({}):\nmissing capacity\n'.format(title, time))
+        print('{}\nmissing capacity\n'.format(description))
 
 
 driver = webdriver.Safari()
